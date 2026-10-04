@@ -11,16 +11,23 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { LICENSE_TYPES, US_STATES } from "@/lib/constants";
 import { formatUsPhone } from "@/lib/lead";
-import { cn } from "@/lib/utils";
 import { Check, Lock } from "lucide-react";
 import { useActionState, useEffect, useState, type ReactNode } from "react";
 
 const initialState: SubmitLeadState | null = null;
 
-const selectClass =
-  "form-control h-8 w-full min-w-0 px-2.5 py-1 text-sm transition-colors outline-none";
+const triggerClass =
+  "form-control h-8 w-full rounded-none px-2.5 shadow-none";
 
 type FormFields = {
   fullName: string;
@@ -103,7 +110,7 @@ export function LeadForm() {
               value={fields.fullName}
               onChange={(e) => setField("fullName", e.target.value)}
               autoComplete="name"
-              placeholder="Dr. Jane Doe"
+              placeholder="Your full name"
               className="form-control"
               aria-invalid={!!state?.fieldErrors?.fullName}
             />
@@ -117,7 +124,7 @@ export function LeadForm() {
               value={fields.phone}
               onChange={(e) => setField("phone", formatUsPhone(e.target.value))}
               autoComplete="tel"
-              placeholder="(555) 123-4567"
+              placeholder="(555) 014-2290"
               className="form-control"
               aria-invalid={!!state?.fieldErrors?.phone}
             />
@@ -131,7 +138,7 @@ export function LeadForm() {
               value={fields.email}
               onChange={(e) => setField("email", e.target.value)}
               autoComplete="email"
-              placeholder="you@clinic.com"
+              placeholder="your.email@xyz.com"
               className="form-control"
               aria-invalid={!!state?.fieldErrors?.email}
             />
@@ -142,26 +149,15 @@ export function LeadForm() {
             label="License type"
             error={state?.fieldErrors?.licenseType}
           >
-            <select
+            <FormSelect
               id="licenseType"
               name="licenseType"
               value={fields.licenseType}
-              onChange={(e) => setField("licenseType", e.target.value)}
-              className={cn(
-                selectClass,
-                !fields.licenseType && "text-muted-foreground",
-              )}
-              aria-invalid={!!state?.fieldErrors?.licenseType}
-            >
-              <option value="" disabled>
-                Select type
-              </option>
-              {LICENSE_TYPES.map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-            </select>
+              placeholder="Choose your license"
+              invalid={!!state?.fieldErrors?.licenseType}
+              onChange={(value) => setField("licenseType", value)}
+              items={LICENSE_TYPES}
+            />
           </Field>
 
           {fields.licenseType === "Other" && (
@@ -175,7 +171,8 @@ export function LeadForm() {
                 name="licenseTypeOther"
                 value={fields.licenseTypeOther}
                 onChange={(e) => setField("licenseTypeOther", e.target.value)}
-                placeholder="e.g. Podiatrist, Pharmacist"
+                placeholder="pharmacist, psychologist, etc."
+           
                 className="form-control"
                 aria-invalid={!!state?.fieldErrors?.licenseTypeOther}
               />
@@ -183,23 +180,15 @@ export function LeadForm() {
           )}
 
           <Field id="state" label="Target state" error={state?.fieldErrors?.state}>
-            <select
+            <FormSelect
               id="state"
               name="state"
               value={fields.state}
-              onChange={(e) => setField("state", e.target.value)}
-              className={cn(selectClass, !fields.state && "text-muted-foreground")}
-              aria-invalid={!!state?.fieldErrors?.state}
-            >
-              <option value="" disabled>
-                Select state
-              </option>
-              {US_STATES.map((usState) => (
-                <option key={usState} value={usState}>
-                  {usState}
-                </option>
-              ))}
-            </select>
+              placeholder="Where you want to practice"
+              invalid={!!state?.fieldErrors?.state}
+              onChange={(value) => setField("state", value)}
+              items={US_STATES}
+            />
           </Field>
 
           {state && !state.ok && !state.fieldErrors && (
@@ -223,6 +212,48 @@ export function LeadForm() {
         </form>
       </CardContent>
     </Card>
+  );
+}
+
+function FormSelect({
+  id,
+  name,
+  value,
+  placeholder,
+  invalid,
+  onChange,
+  items,
+}: {
+  id: string;
+  name: string;
+  value: string;
+  placeholder: string;
+  invalid?: boolean;
+  onChange: (value: string) => void;
+  items: readonly string[];
+}) {
+  const options = items.map((item) => ({ label: item, value: item }));
+
+  return (
+    <Select
+      items={options}
+      name={name}
+      value={value || null}
+      onValueChange={(next) => onChange(next ?? "")}
+    >
+      <SelectTrigger id={id} aria-invalid={invalid} className={triggerClass}>
+        <SelectValue placeholder={placeholder} />
+      </SelectTrigger>
+      <SelectContent align="start" alignItemWithTrigger={false}>
+        <SelectGroup>
+          {options.map((item) => (
+            <SelectItem key={item.value} value={item.value}>
+              {item.label}
+            </SelectItem>
+          ))}
+        </SelectGroup>
+      </SelectContent>
+    </Select>
   );
 }
 

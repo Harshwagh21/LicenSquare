@@ -10,6 +10,7 @@
  */
 
 const SHEET_SECRET = "replace-with-a-long-random-secret";
+const NOTIFY_MAIL = "you@example.com"; 
 
 function doPost(e) {
   try {
@@ -28,10 +29,32 @@ function doPost(e) {
       payload.state || "",
     ]);
 
+    sendLeadMail(payload);
     return jsonResponse({ ok: true });
   } catch (err) {
+    console.error(err);
     return jsonResponse({ ok: false, error: String(err) }, 500);
   }
+}
+
+function sendLeadMail(payload) {
+  const subject = "New LicenSquare lead: " + (payload.fullName || "Unknown");
+  const body = [
+    "A new licensing request was submitted.",
+    "",
+    "Name: " + (payload.fullName || ""),
+    "Phone: " + (payload.phone || ""),
+    "Email: " + (payload.email || ""),
+    "License: " + (payload.licenseType || ""),
+    "State: " + (payload.state || ""),
+  ].join("\n");
+  GmailApp.sendEmail(NOTIFY_MAIL, subject, body);
+  console.log("Lead email sent to " + NOTIFY_MAIL);
+}
+
+function testMail() {
+  GmailApp.sendEmail(NOTIFY_MAIL, "LicenSquare test", "Mail is working.");
+  console.log("Test email sent to " + NOTIFY_MAIL);
 }
 
 function jsonResponse(body, statusCode) {

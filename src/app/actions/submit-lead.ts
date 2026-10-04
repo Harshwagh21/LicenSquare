@@ -1,6 +1,8 @@
 "use server";
 
+import { finishLeadSubmit } from "@/lib/save-lead";
 import { validateLead, type LeadInput } from "@/lib/lead";
+import { after } from "next/server";
 
 export type SubmitLeadState = {
   ok: boolean;
@@ -8,11 +10,30 @@ export type SubmitLeadState = {
   fieldErrors?: Partial<Record<keyof LeadInput, string>>;
 };
 
+const SAVED = "Thank you! Our licensing team will reach out within one business day.";
+const UNCONFIGURED = "Form storage is not configured yet. Please contact the site administrator.";
+
 export async function submitLead(
   _prev: SubmitLeadState | null,
   formData: FormData,
 ): Promise<SubmitLeadState> {
-  const raw: LeadInput = {
+  const validation = validateLead(readLead(formData));
+  if (!validation.ok) return invalidLead(validation.message, validation.field);
+
+  const saved = await finishLeadSubmit({
+    webhookUrl: process.env.GOOGLE_SHEETS_WEBHOOK_URL,
+    secret: process.env.GOOGLE_SHEETS_SECRET,
+    data: validation.data,
+    submittedAt: new Date().toISOString(),
+    schedule: (task) => after(task),
+  });
+
+  if (!saved.ok) return { ok: false, message: UNCONFIGURED };
+  return { ok: true, message: SAVED };
+}
+
+function readLead(formData: FormData): LeadInput {
+  return {
     fullName: String(formData.get("fullName") ?? ""),
     phone: String(formData.get("phone") ?? ""),
     email: String(formData.get("email") ?? ""),
@@ -20,55 +41,12 @@ export async function submitLead(
     licenseTypeOther: String(formData.get("licenseTypeOther") ?? ""),
     state: String(formData.get("state") ?? ""),
   };
+}
 
-  const validation = validateLead(raw);
-  if (!validation.ok) {
-    return {
-      ok: false,
-      message: validation.message,
-      fieldErrors: validation.field
-        ? { [validation.field]: validation.message }
-        : undefined,
-    };
-  }
-
-  const webhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
-  const secret = process.env.GOOGLE_SHEETS_SECRET;
-
-  if (!webhookUrl || !secret) {
-    return {
-      ok: false,
-      message:
-        "Form storage is not configured yet. Please contact the site administrator.",
-    };
-  }
-
-  try {
-    const response = await fetch(webhookUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        secret,
-        ...validation.data,
-        submittedAt: new Date().toISOString(),
-      }),
-    });
-
-    if (!response.ok) {
-      return {
-        ok: false,
-        message: "We could not save your request. Please try again shortly.",
-      };
-    }
-
-    return {
-      ok: true,
-      message: "Thank you! Our licensing team will reach out within one business day.",
-    };
-  } catch {
-    return {
-      ok: false,
-      message: "Network error. Please check your connection and try again.",
-    };
-  }
+function invalidLead(message: string, field?: keyof LeadInput): SubmitLeadState {
+  return {
+    ok: false,
+    message,
+    fieldErrors: field ? { [field]: message } : undefined,
+  };
 }

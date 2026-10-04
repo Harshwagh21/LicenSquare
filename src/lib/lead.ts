@@ -93,7 +93,7 @@ export function validateLead(raw: LeadInput): LeadValidationResult {
     ok: true,
     data: {
       fullName: input.fullName,
-      phone: formatUsPhone(phoneDigits),
+      phone: phoneDigits,
       email: input.email,
       licenseType: resolveLicenseType(input.licenseType, licenseOther),
       state: input.state as UsState,

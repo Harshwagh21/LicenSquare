@@ -18,6 +18,14 @@ describe("validateLead", () => {
     }
   });
 
+  it("stores the phone as 10 digits for the sheet", () => {
+    const result = validateLead(validLead);
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.data.phone).toBe("5551234567");
+    }
+  });
+
   it("rejects empty full name", () => {
     const result = validateLead({ ...validLead, fullName: "  " });
     expect(result.ok).toBe(false);

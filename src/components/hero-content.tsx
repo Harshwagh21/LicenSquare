@@ -24,16 +24,16 @@ export function HeroContent() {
       </p>
       <h1 className="font-heading mt-2 text-2xl font-extrabold leading-[1.08] tracking-tight text-foreground sm:text-3xl lg:text-[2.125rem] xl:text-4xl">
         We help doctors get licensed in{" "}
-        <span className="text-brand-sky underline decoration-2 underline-offset-4">
+        <span className="text-brand-sky decoration-2 underline-offset-4">
           any U.S. state
         </span>
       </h1>
       <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground lg:text-[13px] lg:leading-snug">
         LicenSquare removes friction from state medical boards so you can stay
-        focused on patient care—not paperwork loops.
+        focused on patient care, not paperwork loops.
       </p>
 
-      <div className="mt-5 grid gap-px border border-border bg-border sm:grid-cols-3 lg:mt-6">
+      <div className="mt-5 hidden gap-px border border-border bg-border sm:mt-5 sm:grid sm:grid-cols-3 lg:mt-6">
         {benefits.map((item) => (
           <article key={item.index} className="bg-background p-3 lg:p-3.5">
             <p className="font-heading text-[11px] font-bold tabular-nums text-brand-sky">
