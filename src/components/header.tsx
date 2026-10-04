@@ -12,11 +12,11 @@ const linkClass =
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-30 h-[var(--site-header)] shrink-0 border-b border-border bg-background">
+    <header className="sticky top-0 z-30 h-(--site-header) shrink-0 border-b border-border bg-background">
       <div className="mx-auto flex h-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <a href="#hero" className="shrink-0" aria-label="LicenSquare home">
           <Logo variant="inline" size="header" priority />
-        </a>
+        </a>  
         <DesktopNav />
         <MobileMenu />
       </div>
@@ -65,7 +65,7 @@ function MenuButton({ open, onClick }: { open: boolean; onClick: () => void }) {
   return (
     <button
       type="button"
-      className="inline-flex size-9 items-center justify-center border border-border bg-background text-foreground"
+      className="inline-flex size-9 items-center justify-center bg-background text-foreground"
       aria-expanded={open}
       aria-controls="site-menu"
       aria-label={open ? "Close menu" : "Open menu"}
@@ -83,24 +83,30 @@ function MobilePanel({ onNavigate }: { onNavigate: () => void }) {
       aria-label="Primary"
       className="absolute inset-x-0 top-full z-40 border-b border-border bg-background"
     >
-      {[...NAV_LINKS, START_LINK].map((link) => (
+      <div className="mx-auto flex max-w-6xl flex-col px-4">
+        {NAV_LINKS.map((link) => (
+          <a
+            key={link.href}
+            href={link.href}
+            onClick={onNavigate}
+            className="border-b border-border py-4 text-sm font-semibold uppercase tracking-[0.14em] text-foreground hover:text-brand-sky"
+          >
+            {link.label}
+          </a>
+        ))}
         <a
-          key={link.href}
-          href={link.href}
+          href={START_LINK.href}
           onClick={onNavigate}
-          className={cn(
-            "block border-t border-border px-4 py-3.5 text-sm font-semibold uppercase tracking-[0.14em]",
-            link.href === START_LINK.href ? "text-brand-sky" : "text-foreground",
-          )}
+          className={cn(startClass, "my-4 flex justify-center py-3")}
         >
-          {link.label}
+          {START_LINK.label}
         </a>
-      ))}
-      <div className="flex items-center justify-between border-t border-border px-4 py-3">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-          Appearance
-        </p>
-        <ThemeToggle />
+        <div className="flex items-center justify-between border-t border-border py-3">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+            Appearance
+          </p>
+          <ThemeToggle />
+        </div>
       </div>
     </nav>
   );

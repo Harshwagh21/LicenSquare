@@ -97,7 +97,7 @@ function DeskList() {
 function LinkRow() {
   return (
     <div className="flex flex-col gap-4 border-t border-border px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-      <div className="flex items-center justify-end gap-3">
+      <div className="flex items-center justify-start gap-3">
         <ScrollTop />
         <ThemeToggle />
       </div>

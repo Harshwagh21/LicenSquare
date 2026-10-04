@@ -239,6 +239,19 @@ html {
   }
 }
 
+@media (max-width: 767px) {
+  html {
+    scroll-snap-type: none;
+  }
+
+  .story-copy,
+  .story-item,
+  .site-footer {
+    scroll-snap-align: none;
+    scroll-snap-stop: normal;
+  }
+}
+
 @media (min-width: 1024px) {
   .story-flow {
     display: grid;
