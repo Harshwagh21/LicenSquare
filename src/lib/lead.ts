@@ -1,5 +1,8 @@
 import { LICENSE_TYPES, US_STATES, type LicenseType, type UsState } from "./constants";
 
+export const REQUIREMENT_MIN = 10;
+export const REQUIREMENT_MAX = 1000;
+
 export type LeadInput = {
   fullName: string;
   phone: string;
@@ -7,6 +10,7 @@ export type LeadInput = {
   licenseType: string;
   licenseTypeOther?: string;
   state: string;
+  requirement: string;
 };
 
 export type LeadPayload = {
@@ -15,6 +19,7 @@ export type LeadPayload = {
   email: string;
   licenseType: string;
   state: UsState;
+  requirement: string;
 };
 
 export type LeadValidationResult =
@@ -31,6 +36,7 @@ export function parseLeadInput(raw: LeadInput): LeadInput {
     licenseType: raw.licenseType.trim(),
     licenseTypeOther: raw.licenseTypeOther?.trim() ?? "",
     state: raw.state.trim(),
+    requirement: raw.requirement.trim(),
   };
 }
 
@@ -89,6 +95,9 @@ export function validateLead(raw: LeadInput): LeadValidationResult {
     return { ok: false, message: "Select a U.S. state.", field: "state" };
   }
 
+  const requirementError = validateRequirement(input.requirement);
+  if (requirementError) return requirementError;
+
   return {
     ok: true,
     data: {
@@ -97,6 +106,25 @@ export function validateLead(raw: LeadInput): LeadValidationResult {
       email: input.email,
       licenseType: resolveLicenseType(input.licenseType, licenseOther),
       state: input.state as UsState,
+      requirement: input.requirement,
     },
   };
+}
+
+function validateRequirement(value: string): LeadValidationResult | null {
+  if (value.length < REQUIREMENT_MIN) {
+    return {
+      ok: false,
+      message: "Tell us what you need in a sentence or two.",
+      field: "requirement",
+    };
+  }
+  if (value.length > REQUIREMENT_MAX) {
+    return {
+      ok: false,
+      message: "Keep this under 1000 characters.",
+      field: "requirement",
+    };
+  }
+  return null;
 }

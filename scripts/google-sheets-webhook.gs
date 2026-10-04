@@ -2,7 +2,7 @@
  * LicenSquare lead form → Google Sheet
  *
  * 1. Create a Sheet with headers in row 1:
- *    Timestamp | Full Name | Phone | Email | License Type | State
+ *    Timestamp | Full Name | Phone | Email | License Type | State | Requirement
  * 2. Extensions → Apps Script → paste this file
  * 3. Set SHEET_SECRET below to a long random string (match GOOGLE_SHEETS_SECRET in .env)
  * 4. Deploy → New deployment → Web app → Execute as: Me → Who has access: Anyone
@@ -27,6 +27,7 @@ function doPost(e) {
       payload.email || "",
       payload.licenseType || "",
       payload.state || "",
+      payload.requirement || "",
     ]);
 
     sendLeadMail(payload);
@@ -47,6 +48,7 @@ function sendLeadMail(payload) {
     "Email: " + (payload.email || ""),
     "License: " + (payload.licenseType || ""),
     "State: " + (payload.state || ""),
+    "Requirement: " + (payload.requirement || ""),
   ].join("\n");
   GmailApp.sendEmail(NOTIFY_MAIL, subject, body);
   console.log("Lead email sent to " + NOTIFY_MAIL);

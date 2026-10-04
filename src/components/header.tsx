@@ -1,53 +1,110 @@
-import { cn } from "@/lib/utils";
-import { Logo } from "./logo";
+"use client";
 
-const trustItems = ["100% Secure", "Expert Guidance", "Faster Process"] as const;
+import { Logo } from "@/components/logo";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { NAV_LINKS, START_LINK } from "@/lib/nav";
+import { cn } from "@/lib/utils";
+import { Menu, X } from "lucide-react";
+import { useEffect, useState } from "react";
+
+const linkClass =
+  "text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground transition-colors hover:text-brand-sky";
 
 export function Header() {
   return (
-    <header className="relative z-20 shrink-0 border-b border-border bg-background">
-      <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-2.5 sm:justify-between sm:px-6 lg:px-8">
-        <Logo variant="inline" size="header" priority className="shrink-0" />
-        <TrustMarquee />
-        <TrustList className="hidden sm:flex" />
+    <header className="sticky top-0 z-30 h-[var(--site-header)] shrink-0 border-b border-border bg-background">
+      <div className="mx-auto flex h-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+        <a href="#hero" className="shrink-0" aria-label="LicenSquare home">
+          <Logo variant="inline" size="header" priority />
+        </a>
+        <DesktopNav />
+        <MobileMenu />
       </div>
     </header>
   );
 }
 
-function TrustList({ className }: { className?: string }) {
+function DesktopNav() {
   return (
-    <ul className={cn("items-center gap-x-4", className)}>
-      {trustItems.map((item) => (
-        <li
-          key={item}
-          className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"
-        >
-          {item}
-        </li>
+    <nav className="hidden items-center gap-6 md:flex" aria-label="Primary">
+      {NAV_LINKS.map((link) => (
+        <a key={link.href} href={link.href} className={linkClass}>
+          {link.label}
+        </a>
       ))}
-    </ul>
+      <a href={START_LINK.href} className={startClass}>
+        {START_LINK.label}
+      </a>
+    </nav>
   );
 }
 
-function TrustMarquee() {
+function MobileMenu() {
+  const [open, setOpen] = useState(false);
+  const close = () => setOpen(false);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") close();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open]);
+
   return (
-    <div className="trust-marquee-mask min-w-0 flex-1 overflow-hidden sm:hidden">
-      <div className="trust-marquee flex w-max">
-        {[0, 1].map((copy) => (
-          <ul key={copy} className="flex shrink-0 items-center py-1.5" aria-hidden={copy === 1}>
-            {trustItems.map((item) => (
-              <li
-                key={item}
-                className="flex items-center gap-4 px-4 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground"
-              >
-                {item}
-                <span className="size-1 shrink-0 rounded-full bg-brand-sky" aria-hidden />
-              </li>
-            ))}
-          </ul>
-        ))}
-      </div>
+    <div className="md:hidden">
+      <MenuButton open={open} onClick={() => setOpen((value) => !value)} />
+      {open && <MobilePanel onNavigate={close} />}
     </div>
   );
 }
+
+function MenuButton({ open, onClick }: { open: boolean; onClick: () => void }) {
+  const Icon = open ? X : Menu;
+  return (
+    <button
+      type="button"
+      className="inline-flex size-9 items-center justify-center border border-border bg-background text-foreground"
+      aria-expanded={open}
+      aria-controls="site-menu"
+      aria-label={open ? "Close menu" : "Open menu"}
+      onClick={onClick}
+    >
+      <Icon className="size-4" />
+    </button>
+  );
+}
+
+function MobilePanel({ onNavigate }: { onNavigate: () => void }) {
+  return (
+    <nav
+      id="site-menu"
+      aria-label="Primary"
+      className="absolute inset-x-0 top-full z-40 border-b border-border bg-background"
+    >
+      {[...NAV_LINKS, START_LINK].map((link) => (
+        <a
+          key={link.href}
+          href={link.href}
+          onClick={onNavigate}
+          className={cn(
+            "block border-t border-border px-4 py-3.5 text-sm font-semibold uppercase tracking-[0.14em]",
+            link.href === START_LINK.href ? "text-brand-sky" : "text-foreground",
+          )}
+        >
+          {link.label}
+        </a>
+      ))}
+      <div className="flex items-center justify-between border-t border-border px-4 py-3">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+          Appearance
+        </p>
+        <ThemeToggle />
+      </div>
+    </nav>
+  );
+}
+
+const startClass =
+  "border border-foreground bg-primary px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-primary-foreground transition-colors hover:bg-primary/80";

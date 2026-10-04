@@ -40,6 +40,7 @@ function readLead(formData: FormData): LeadInput {
     licenseType: String(formData.get("licenseType") ?? ""),
     licenseTypeOther: String(formData.get("licenseTypeOther") ?? ""),
     state: String(formData.get("state") ?? ""),
+    requirement: String(formData.get("requirement") ?? ""),
   };
 }
 

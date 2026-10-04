@@ -25,7 +25,7 @@ const BRAND = {
 } as const;
 
 const SIZE_CLASS = {
-  header: "h-11 w-auto sm:h-12",
+  header: "h-8 w-auto sm:h-9",
   footer: "h-8 w-auto sm:h-9",
   default: "h-10 w-auto",
   mark: "h-8 w-8 shrink-0 sm:h-9 sm:w-9",

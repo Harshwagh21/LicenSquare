@@ -5,6 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  --site-header: 4.5rem;
   --background: #f2f4f7;
   --foreground: #0c1220;
   --muted: #e8ebf0;
@@ -192,4 +193,111 @@
   @apply rounded-none border-border bg-background text-foreground;
   @apply focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40;
   @apply dark:border-input dark:bg-muted/50 dark:placeholder:text-muted-foreground;
+}
+
+html {
+  scroll-snap-type: y mandatory;
+  scroll-padding-top: var(--site-header);
+}
+
+.story-copy,
+.site-footer {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+.wordmark-band {
+  container-type: inline-size;
+}
+
+.footer-wordmark {
+  display: block;
+  font-size: calc(100cqi / 5.45);
+  line-height: 0.86;
+  letter-spacing: -0.055em;
+  padding-bottom: 0.26em;
+  white-space: nowrap;
+}
+
+.story-flow {
+  display: flex;
+  flex-direction: column;
+}
+
+.story-copies,
+.story-shell,
+.story-window,
+.opposite-track {
+  display: contents;
+}
+
+@media (max-width: 1023px) {
+  .story-item {
+    order: var(--order);
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+}
+
+@media (min-width: 1024px) {
+  .story-flow {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .story-copies,
+  .story-shell {
+    display: block;
+    min-width: 0;
+  }
+
+  .story-shell {
+    border-left: 1px solid var(--border);
+  }
+
+  .story-window {
+    position: sticky;
+    top: var(--site-header);
+    display: block;
+    height: calc(100dvh - var(--site-header));
+    overflow: hidden;
+  }
+
+  .opposite-track {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .story-copy,
+  .story-visual {
+    height: calc(100dvh - var(--site-header));
+    flex: 0 0 auto;
+  }
+
+  .story-visual {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .story-visual > * {
+    width: 100%;
+    margin-block: auto;
+  }
+
+  .story-visual {
+    scroll-snap-align: none;
+    scroll-snap-stop: normal;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-snap-type: y proximity;
+  }
+
+  .story-copy,
+  .story-item,
+  .site-footer {
+    scroll-snap-stop: normal;
+  }
 }
