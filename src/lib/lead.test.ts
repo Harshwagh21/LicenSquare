@@ -42,6 +42,27 @@ describe("validateLead", () => {
     const result = validateLead({ ...validLead, state: "Narnia" });
     expect(result.ok).toBe(false);
   });
+
+  it("requires details when license type is Other", () => {
+    const result = validateLead({
+      ...validLead,
+      licenseType: "Other",
+      licenseTypeOther: "",
+    });
+    expect(result.ok).toBe(false);
+  });
+
+  it("accepts Other with a custom license label", () => {
+    const result = validateLead({
+      ...validLead,
+      licenseType: "Other",
+      licenseTypeOther: "Podiatrist",
+    });
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.data.licenseType).toBe("Other (Podiatrist)");
+    }
+  });
 });
 
 describe("parseLeadInput", () => {

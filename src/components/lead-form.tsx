@@ -20,13 +20,14 @@ import { useActionState, useEffect, useState, type ReactNode } from "react";
 const initialState: SubmitLeadState | null = null;
 
 const selectClass =
-  "h-8 w-full min-w-0 rounded-none border border-input bg-transparent px-2.5 py-1 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30";
+  "form-control h-8 w-full min-w-0 px-2.5 py-1 text-sm transition-colors outline-none";
 
 type FormFields = {
   fullName: string;
   phone: string;
   email: string;
   licenseType: string;
+  licenseTypeOther: string;
   state: string;
 };
 
@@ -35,8 +36,12 @@ const emptyFields: FormFields = {
   phone: "",
   email: "",
   licenseType: "",
+  licenseTypeOther: "",
   state: "",
 };
+
+const cardClass =
+  "brutal-frame rounded-none border border-border bg-card text-card-foreground shadow-none dark:bg-card dark:border-input";
 
 export function LeadForm() {
   const [state, formAction, pending] = useActionState(submitLead, initialState);
@@ -47,14 +52,20 @@ export function LeadForm() {
   }, [state?.ok]);
 
   const setField = (key: keyof FormFields, value: string) => {
-    setFields((prev) => ({ ...prev, [key]: value }));
+    setFields((prev) => {
+      const next = { ...prev, [key]: value };
+      if (key === "licenseType" && value !== "Other") {
+        next.licenseTypeOther = "";
+      }
+      return next;
+    });
   };
 
   if (state?.ok) {
     return (
-      <Card className="brutal-frame rounded-none border-2 border-foreground bg-card shadow-none">
+      <Card className={cardClass}>
         <CardContent className="flex flex-col items-center px-6 py-12 text-center">
-          <span className="mb-4 flex size-12 items-center justify-center border-2 border-foreground bg-brand-sky/15 text-brand-sky">
+          <span className="mb-4 flex size-12 items-center justify-center border border-border bg-brand-sky/15 text-brand-sky dark:border-input">
             <Check className="size-5" strokeWidth={2.5} />
           </span>
           <CardTitle className="font-heading text-lg">Request received</CardTitle>
@@ -67,16 +78,16 @@ export function LeadForm() {
   }
 
   return (
-    <Card className="brutal-frame rounded-none border-2 border-foreground bg-card shadow-none">
-      <CardHeader className="border-b border-foreground/15 px-4 py-3 sm:px-5">
+    <Card className={cardClass}>
+      <CardHeader className="border-b border-border px-4 py-3 sm:px-5 dark:border-input">
         <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-brand-sky">
-          Intake
+          Start your application
         </p>
         <CardTitle className="font-heading text-xl font-extrabold tracking-tight">
           Get started
         </CardTitle>
-        <CardDescription className="text-xs leading-relaxed">
-          Share your details—our licensing team responds within one business day.
+        <CardDescription className="text-xs leading-relaxed text-muted-foreground">
+          Share your details, our licensing team responds within one business day.
         </CardDescription>
       </CardHeader>
       <CardContent className="px-4 py-4 sm:px-5">
@@ -93,7 +104,7 @@ export function LeadForm() {
               onChange={(e) => setField("fullName", e.target.value)}
               autoComplete="name"
               placeholder="Dr. Jane Doe"
-              className="rounded-none"
+              className="form-control"
               aria-invalid={!!state?.fieldErrors?.fullName}
             />
           </Field>
@@ -107,7 +118,7 @@ export function LeadForm() {
               onChange={(e) => setField("phone", formatUsPhone(e.target.value))}
               autoComplete="tel"
               placeholder="(555) 123-4567"
-              className="rounded-none"
+              className="form-control"
               aria-invalid={!!state?.fieldErrors?.phone}
             />
           </Field>
@@ -121,7 +132,7 @@ export function LeadForm() {
               onChange={(e) => setField("email", e.target.value)}
               autoComplete="email"
               placeholder="you@clinic.com"
-              className="rounded-none"
+              className="form-control"
               aria-invalid={!!state?.fieldErrors?.email}
             />
           </Field>
@@ -136,7 +147,10 @@ export function LeadForm() {
               name="licenseType"
               value={fields.licenseType}
               onChange={(e) => setField("licenseType", e.target.value)}
-              className={cn(selectClass, !fields.licenseType && "text-muted-foreground")}
+              className={cn(
+                selectClass,
+                !fields.licenseType && "text-muted-foreground",
+              )}
               aria-invalid={!!state?.fieldErrors?.licenseType}
             >
               <option value="" disabled>
@@ -149,6 +163,24 @@ export function LeadForm() {
               ))}
             </select>
           </Field>
+
+          {fields.licenseType === "Other" && (
+            <Field
+              id="licenseTypeOther"
+              label="Specify license"
+              error={state?.fieldErrors?.licenseTypeOther}
+            >
+              <Input
+                id="licenseTypeOther"
+                name="licenseTypeOther"
+                value={fields.licenseTypeOther}
+                onChange={(e) => setField("licenseTypeOther", e.target.value)}
+                placeholder="e.g. Podiatrist, Pharmacist"
+                className="form-control"
+                aria-invalid={!!state?.fieldErrors?.licenseTypeOther}
+              />
+            </Field>
+          )}
 
           <Field id="state" label="Target state" error={state?.fieldErrors?.state}>
             <select
@@ -207,7 +239,10 @@ function Field({
 }) {
   return (
     <div className="space-y-1.5">
-      <Label htmlFor={id} className="text-[11px] font-semibold uppercase tracking-wide">
+      <Label
+        htmlFor={id}
+        className="text-[11px] font-semibold uppercase tracking-wide text-foreground"
+      >
         {label} <span className="text-destructive">*</span>
       </Label>
       {children}

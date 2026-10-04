@@ -24,4 +24,4 @@ Open [http://localhost:3000](http://localhost:3000).
 - `npm run build` — production build
 - `npm run test` — validation unit tests
 
-Local reference mockups live in `images/` (gitignored).
+Brand assets live in [`public/branding/`](public/branding/) (committed with the repo).

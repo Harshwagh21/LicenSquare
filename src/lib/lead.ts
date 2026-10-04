@@ -5,6 +5,7 @@ export type LeadInput = {
   phone: string;
   email: string;
   licenseType: string;
+  licenseTypeOther?: string;
   state: string;
 };
 
@@ -12,7 +13,7 @@ export type LeadPayload = {
   fullName: string;
   phone: string;
   email: string;
-  licenseType: LicenseType;
+  licenseType: string;
   state: UsState;
 };
 
@@ -28,8 +29,14 @@ export function parseLeadInput(raw: LeadInput): LeadInput {
     phone: raw.phone.trim(),
     email: raw.email.trim().toLowerCase(),
     licenseType: raw.licenseType.trim(),
+    licenseTypeOther: raw.licenseTypeOther?.trim() ?? "",
     state: raw.state.trim(),
   };
+}
+
+export function resolveLicenseType(licenseType: string, licenseTypeOther: string): string {
+  if (licenseType !== "Other") return licenseType;
+  return `Other (${licenseTypeOther})`;
 }
 
 export function digitsOnlyPhone(phone: string): string {
@@ -69,6 +76,15 @@ export function validateLead(raw: LeadInput): LeadValidationResult {
     return { ok: false, message: "Select a license type.", field: "licenseType" };
   }
 
+  const licenseOther = input.licenseTypeOther ?? "";
+  if (input.licenseType === "Other" && licenseOther.length < 2) {
+    return {
+      ok: false,
+      message: "Please specify your license type.",
+      field: "licenseTypeOther",
+    };
+  }
+
   if (!US_STATES.includes(input.state as UsState)) {
     return { ok: false, message: "Select a U.S. state.", field: "state" };
   }
@@ -79,7 +95,7 @@ export function validateLead(raw: LeadInput): LeadValidationResult {
       fullName: input.fullName,
       phone: formatUsPhone(phoneDigits),
       email: input.email,
-      licenseType: input.licenseType as LicenseType,
+      licenseType: resolveLicenseType(input.licenseType, licenseOther),
       state: input.state as UsState,
     },
   };

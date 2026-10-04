@@ -7,6 +7,11 @@ const BRAND = {
     width: 640,
     height: 160,
   },
+  "inline-jpeg": {
+    src: "/branding/logo-inline.jpeg",
+    width: 640,
+    height: 160,
+  },
   full: {
     src: "/branding/full-logo.png",
     width: 720,
@@ -23,7 +28,7 @@ const SIZE_CLASS = {
   header: "h-11 w-auto sm:h-12",
   footer: "h-8 w-auto sm:h-9",
   default: "h-10 w-auto",
-  mark: "h-9 w-9 sm:h-10 sm:w-10",
+  mark: "h-8 w-8 shrink-0 sm:h-9 sm:w-9",
 } as const;
 
 type LogoVariant = keyof typeof BRAND;
@@ -62,6 +67,17 @@ export function Logo({
           Your License. Our Expertise.
         </p>
       )}
+    </div>
+  );
+}
+
+export function FooterBrand() {
+  return (
+    <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
+      <Logo variant="mark" className="shrink-0" />
+      <p className="text-xs font-medium leading-tight tracking-narrow text-brand-sky sm:text-[13px]">
+        Your License. Our Expertise.
+      </p>
     </div>
   );
 }

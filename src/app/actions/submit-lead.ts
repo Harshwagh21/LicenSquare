@@ -17,6 +17,7 @@ export async function submitLead(
     phone: String(formData.get("phone") ?? ""),
     email: String(formData.get("email") ?? ""),
     licenseType: String(formData.get("licenseType") ?? ""),
+    licenseTypeOther: String(formData.get("licenseTypeOther") ?? ""),
     state: String(formData.get("state") ?? ""),
   };
 

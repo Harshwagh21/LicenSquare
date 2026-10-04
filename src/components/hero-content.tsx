@@ -2,12 +2,12 @@ const benefits = [
   {
     index: "01",
     title: "End-to-End Support",
-    description: "Application through approval—handled in one workflow.",
+    description: "Application through approval, handled in one workflow.",
   },
   {
     index: "02",
     title: "Save Time",
-    description: "Fewer delays with structured document and state tracking.",
+    description: "Fewer delays with structured documents and state tracking.",
   },
   {
     index: "03",
@@ -19,8 +19,8 @@ const benefits = [
 export function HeroContent() {
   return (
     <div className="relative z-10 max-w-xl">
-      <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-brand-sky">
-        Medical licensing · All 50 states + DC
+      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-brand-sky">
+        Medical licensing · Every U.S. state.
       </p>
       <h1 className="font-heading mt-2 text-2xl font-extrabold leading-[1.08] tracking-tight text-foreground sm:text-3xl lg:text-[2.125rem] xl:text-4xl">
         We help doctors get licensed in{" "}
@@ -33,7 +33,7 @@ export function HeroContent() {
         focused on patient care—not paperwork loops.
       </p>
 
-      <div className="mt-5 grid gap-px border-2 border-foreground bg-foreground sm:grid-cols-3 lg:mt-6">
+      <div className="mt-5 grid gap-px border border-border bg-border sm:grid-cols-3 lg:mt-6">
         {benefits.map((item) => (
           <article key={item.index} className="bg-background p-3 lg:p-3.5">
             <p className="font-heading text-[11px] font-bold tabular-nums text-brand-sky">
