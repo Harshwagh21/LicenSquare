@@ -109,8 +109,8 @@ function LegalBar({ year }: { year: number }) {
   return (
     <div className="flex flex-col gap-2 border-t border-border px-4 py-4 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
       <Logo variant="mark" size="footer" className="hidden size-8 sm:flex" />
-      <p>© {year} LicenSquare. All rights reserved.</p>
-      <p>Medical licensing desk</p>
+      <p className="">© {year} LicenSquare. All rights reserved.</p>
+      <p className="font-grotesk text-xs">Made with ♥ by Harsh</p>
     </div>
   );
 }
