@@ -7,6 +7,7 @@ const validLead = {
   email: "jane@example.com",
   licenseType: "MD",
   state: "California",
+  requirement: "New California license before July, including telehealth.",
 };
 
 describe("validateLead", () => {
@@ -60,6 +61,31 @@ describe("validateLead", () => {
     expect(result.ok).toBe(false);
   });
 
+  it("rejects a requirement that is too short to act on", () => {
+    const result = validateLead({ ...validLead, requirement: "Need help" });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.field).toBe("requirement");
+  });
+
+  it("rejects a requirement over 1000 characters", () => {
+    const result = validateLead({ ...validLead, requirement: "a".repeat(1001) });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.field).toBe("requirement");
+  });
+
+  it("stores a trimmed requirement on the lead", () => {
+    const result = validateLead({
+      ...validLead,
+      requirement: "  Renewal in Texas before the current license lapses.  ",
+    });
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.data.requirement).toBe(
+        "Renewal in Texas before the current license lapses.",
+      );
+    }
+  });
+
   it("accepts Other with a custom license label", () => {
     const result = validateLead({
       ...validLead,
@@ -81,8 +107,10 @@ describe("parseLeadInput", () => {
       email: " JANE@EXAMPLE.COM ",
       licenseType: "MD",
       state: "Texas",
+      requirement: "  Need a new license  ",
     });
     expect(parsed.fullName).toBe("Jane Doe");
     expect(parsed.email).toBe("jane@example.com");
+    expect(parsed.requirement).toBe("Need a new license");
   });
 });

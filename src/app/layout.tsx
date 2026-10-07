@@ -22,6 +22,10 @@ export const metadata: Metadata = {
   title: "LicenSquare | Medical Licensing Experts",
   description:
     "LicenSquare helps physicians and clinicians get licensed in any U.S. state with end-to-end support and expert guidance.",
+  icons: {
+    icon: "/branding/logo.png",
+    apple: "/branding/logo.png",
+  },
   openGraph: {
     title: "LicenSquare | Your License. Our Expertise.",
     description:

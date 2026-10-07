@@ -10,8 +10,10 @@ const lead: LeadSaveInput = {
     email: "jane@example.com",
     licenseType: "MD",
     state: "California",
+    requirement: "New California license before July.",
   },
   submittedAt: "2026-10-04T12:00:00.000Z",
+  schedule: () => {},
 };
 
 describe("finishLeadSubmit", () => {

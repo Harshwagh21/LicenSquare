@@ -1,13 +1,13 @@
 import { Header } from "@/components/header";
-import { Hero } from "@/components/hero";
+import { OppositeStory } from "@/components/opposite-story";
 import { SiteFooter } from "@/components/site-footer";
 
 export default function Home() {
   return (
-    <div className="flex min-h-dvh flex-col lg:h-dvh lg:max-h-dvh lg:overflow-hidden">
+    <div className="flex min-h-dvh flex-col">
       <Header />
-      <main className="flex min-h-0 flex-1 flex-col">
-        <Hero />
+      <main className="flex-1">
+        <OppositeStory />
       </main>
       <SiteFooter />
     </div>

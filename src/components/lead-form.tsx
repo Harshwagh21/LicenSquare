@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { LICENSE_TYPES, US_STATES } from "@/lib/constants";
-import { formatUsPhone } from "@/lib/lead";
+import { REQUIREMENT_MAX, formatUsPhone } from "@/lib/lead";
 import { Check, Lock } from "lucide-react";
 import { useActionState, useEffect, useState, type ReactNode } from "react";
 
@@ -36,6 +36,7 @@ type FormFields = {
   licenseType: string;
   licenseTypeOther: string;
   state: string;
+  requirement: string;
 };
 
 const emptyFields: FormFields = {
@@ -45,6 +46,7 @@ const emptyFields: FormFields = {
   licenseType: "",
   licenseTypeOther: "",
   state: "",
+  requirement: "",
 };
 
 const cardClass =
@@ -94,7 +96,7 @@ export function LeadForm() {
           Get started
         </CardTitle>
         <CardDescription className="text-xs leading-relaxed text-muted-foreground">
-          Share your details, our licensing team responds within one business day.
+          Share your details and what you need. We reply within one business day.
         </CardDescription>
       </CardHeader>
       <CardContent className="px-4 py-4 sm:px-5">
@@ -188,6 +190,24 @@ export function LeadForm() {
               invalid={!!state?.fieldErrors?.state}
               onChange={(value) => setField("state", value)}
               items={US_STATES}
+            />
+          </Field>
+
+          <Field
+            id="requirement"
+            label="What you need"
+            error={state?.fieldErrors?.requirement}
+          >
+            <textarea
+              id="requirement"
+              name="requirement"
+              value={fields.requirement}
+              onChange={(e) => setField("requirement", e.target.value)}
+              maxLength={REQUIREMENT_MAX}
+              rows={3}
+              placeholder="New license before a start date, a renewal, or another state."
+              className="form-control min-h-20 w-full resize-y px-2.5 py-2 text-sm"
+              aria-invalid={!!state?.fieldErrors?.requirement}
             />
           </Field>
 
